@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>考试</title>
+	</head>
+
+	<body>
+		<h3 id="top"></h3>
+		<form>
+			<div id="list"></div>
+			<input type="button" name="" id="" value="交卷" onclick="sub()" />
+			<input type="button" name="" id="" value="查看答案" onclick="da()" />
+			<input type="reset" name="" id="" value="重做" onclick="txt.innerHTML='',txt1.innerHTML=''" />
+			<span id="txt"></span><span id="txt1"></span>
+		</form>
+		<script>
+			var name = "武汉软件工程职业学院"
+			var user = {}
+
+			function wel() {
+				var wellcome = prompt("你好，欢迎登录" + name + "，注册请输入1，登录请输入2")
+				if(wellcome == 1) {
+					register()
+				} else if(wellcome == 2) {
+					login()
+				} else if(wellcome == null) {
+					out()
+				} else {
+					alert("请输入正确的选择数字")
+					arguments.callee(this)
+				}
+			}
+
+			function register() {
+				var zc = prompt("请输入注册帐号")
+				if(zc.length < 5) {
+					alert("注册帐号最少是5位数")
+					arguments.callee(this)
+				}
+				var mm = prompt("请输入密码")
+				if(mm.length < 5) {
+					alert("注册密码最少是5位数")
+					arguments.callee(this)
+				}
+				var mm2 = prompt("请重新输入输入密码")
+				if(mm2 != mm) {
+					alert("两次密码必须相等")
+					arguments.callee(this)
+				}
+				user[zc] = mm2
+				var cg = confirm("注册成功，是否要登录？")
+				if(cg == true) {
+					login()
+
+				} else {
+					out()
+				}
+			}
+
+			function login() {
+				var zc = prompt("请输入登录帐号")
+				var mm = prompt("请输入登录密码")
+				if(user[zc] != mm) {
+					alert("请输入正确的帐号和密码")
+					arguments.callee(this)
+				} else {
+					alert("登录成功！")
+					console.log(user)
+					document.write("登录成功，您的用户名是" + zc + "密码是" + mm)
+					var name = "武汉软件工程学院大一高等数学期末考试"
+					var data = [{
+						title: "考题信息1",
+						con: ["A:答案1", "B:答案2", "C:答案3", "D:答案4"],
+						result: "BCD",
+						fs: 5
+					}, {
+						title: "考题信息2",
+						con: ["A:答案1", "B:答案2", "C:答案3", "D:答案4"],
+						result: "B",
+						fs: 5
+					}, {
+						title: "考题信息3",
+						con: ["A:答案1", "B:答案2", "C:答案3", "D:答案4"],
+						result: "B",
+						fs: 5
+					}, {
+						title: "考题信息2",
+						con: ["A:答案1", "B:答案2", "C:答案3", "D:答案4"],
+						result: "B",
+						fs: 5
+					}, {
+						title: "考题信息2",
+						con: ["A:答案1", "B:答案2", "C:答案3", "D:答案4"],
+						result: "B",
+						fs: 5
+					}]
+					var i = 0,
+						z = 0
+					var list = document.getElementById("list")
+					while(i < data.length) {
+						var h4 = document.createElement("h4") //创建一个题目的<h4>标签
+						h4.appendChild(document.createTextNode(data[i]["title"] + "(" + data[i]["fs"] + "分)")) //创建一个题目的标题并装入H4标签
+						list.appendChild(h4) //将H4装入id为list的div里
+						var a = 0
+						while(a < data[i]["con"].length) {
+							var span = document.createElement("span") //创建选项的span
+							//span.innerHTML="<input type='radio' name='a"+i+"'  value='"+data[i]["con"][a].substring(0,1)+"' />"//单选题
+							span.innerHTML = "<input type='checkbox' name='a" + i + "'  value='" + data[i]["con"][a].substring(0, 1) + "' />" //创建每个多选项的span里面的前面的单选按钮//多选题
+							span.appendChild(document.createTextNode(data[i]["con"][a])) //创建每个选项的span里面的选择答案内容
+							list.appendChild(span)
+							a++
+						}
+						z += data[i]["fs"] //设置一个总分
+						i++
+					}
+					//设置试卷标题+题目数+总分
+					document.getElementById("top").innerHTML = name + "(共" + data.length + "题，总分" + z + "分)"
+
+					//交卷方法
+					function sub() {
+						var i = 0,
+							add = 0
+						while(i < data.length) {
+							var spans = document.getElementsByName("a" + i) //获取每个题目span选项集合			
+							var e = 0,
+								v = ""
+							while(e < spans.length) {
+								if(spans[e].checked) { //获取每个span里面选择按钮是否被选中
+									v += spans[e].value //获取被选中的value值
+								}
+								e++
+							}
+
+							if(v == data[i]["result"]) { //判断选中的value值与答案是否相等
+								add += data[i]["fs"] //相等则自动增加其分数
+							}
+							i++
+
+						}
+						if(add / z > 0.6 && add / z <= 0.8) { //输出分数和判断成绩级别
+							document.getElementById("txt").innerHTML = "你的总分是" + add + "分,成绩还行"
+						} else if(add / z > 0.8) {
+							document.getElementById("txt").innerHTML = "你的总分是" + add + "分,非常优秀，你已超神"
+						} else {
+							document.getElementById("txt").innerHTML = "你的总分是" + add + "分,你已无药可救"
+						}
+
+					}
+
+					function da() { //查看答案
+						var answer = "",
+							i = 0
+						while(i < data.length) {
+							answer += (i + 1) + "." + data[i]["result"] + " "
+							i++
+						}
+						document.getElementById("txt1").innerHTML = answer
+					}
+				}
+			}
+
+			function out() {
+				alert("欢迎下次使用！")
+			}
+			wel()
+		</script>
+
+	</body>
+
+</html>
